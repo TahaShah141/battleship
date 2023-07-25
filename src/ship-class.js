@@ -38,17 +38,3 @@ class Segment {
 }
 
 module.exports = Ship;
-
-
-// function test() {
-//     let a = [1, 2, 4, 5, 3, 7, 3];
-
-//     for (let x in a) {
-//         console.log(x);
-//         if (x === 7) return true;
-//     }
-
-//     return false;
-// }
-
-// console.log(test());
