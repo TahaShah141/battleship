@@ -1,4 +1,5 @@
 const Player = require('./player-class');
+import { getShips } from './ship-class';
 
 export class Gameloop {
     constructor() {
@@ -7,6 +8,6 @@ export class Gameloop {
     }
 
     static setup() {
-
+        let ships = getShips();
     }
 }

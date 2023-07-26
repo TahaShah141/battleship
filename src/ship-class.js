@@ -37,4 +37,13 @@ class Segment {
     }
 }
 
-module.exports = Ship;
+
+export function getShips() {
+    let ships = [];
+    for (let count = 1; count <= 4; count++)
+    for (let i = 0; i < count; i++) 
+    ships.push(new Ship(5-count));
+    return ships;
+}
+
+export default {Ship};
