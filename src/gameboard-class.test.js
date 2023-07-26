@@ -1,4 +1,3 @@
-const { experiments } = require('webpack');
 const Gameboard = require('./gameboard-class');
 const Ship = require('./ship-class')
 

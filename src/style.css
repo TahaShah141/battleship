@@ -1,5 +1,82 @@
+:root {
+    --black: #111;
+    --white: #ddd;
+    --box-size: 30px;
+}
+
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
 }
+
+body {
+    height: 100vh;
+    display: grid;
+    grid-template-rows: 100px 1fr 50px;
+}
+
+.center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.header, .footer{
+    background-color: var(--black);
+    color: var(--white);
+    padding: 20px;
+}
+
+.header-title {
+    font-size: 3rem;
+}
+
+.main {
+    background-color: var(--white);
+    display: flex;
+    justify-content: center;
+    gap: 100px;
+}
+
+
+.player-view {
+    flex-direction: column;
+    gap: 10px;
+}
+
+.player-name {
+    font-size: 2rem;
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+.board {
+    border: 1px solid black;
+    box-shadow: 3px 3px 20px #333;
+    height: calc(11*(var(--box-size)+11));
+    width: calc(11*var(--box-size)+11);
+
+    display: grid;
+    grid-template-columns: repeat(11, var(--box-size));
+    grid-template-rows: repeat(11, var(--box-size));
+}
+
+.cell {
+    background-color: white;
+    border: 1px solid #555;
+}
+
+.cell-heading {
+    background-color: #333;
+    color: var(--white);
+}
+
+.cell:hover {
+    background-color: #bbb;
+}
+
+.cell-heading:hover {
+    background-color: #333;
+}
+
