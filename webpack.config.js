@@ -9,7 +9,7 @@ module.exports = {
         clean: true
     },
     plugins: [
-        new HTMLWebpackPlugin({title: "Project"})
+        new HTMLWebpackPlugin({title: "BattleShip"})
     ],
     module: {
         rules: [
