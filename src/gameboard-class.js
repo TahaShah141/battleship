@@ -92,19 +92,19 @@ export function defaultGameboard() {
 
     let ships = getShips();
 
-    gameboard.addShip(ships[0], 3, 6);
+    gameboard.addShip(ships[0], 3, 7);
 
-    gameboard.addShip(ships[1], 0, 4);
-    gameboard.addShip(ships[2], 7, 4);
+    gameboard.addShip(ships[1], 1, 5);
+    gameboard.addShip(ships[2], 6, 5);
 
-    gameboard.addShip(ships[3], 0, 2);
-    gameboard.addShip(ships[4], 4, 2);
-    gameboard.addShip(ships[5], 8, 2);
+    gameboard.addShip(ships[3], 0, 3);
+    gameboard.addShip(ships[4], 4, 3);
+    gameboard.addShip(ships[5], 8, 3);
     
-    gameboard.addShip(ships[6], 0, 0);
-    gameboard.addShip(ships[7], 2, 0);
-    gameboard.addShip(ships[8], 7, 0);
-    gameboard.addShip(ships[9], 9, 0);
+    gameboard.addShip(ships[6], 0, 1);
+    gameboard.addShip(ships[7], 2, 1);
+    gameboard.addShip(ships[8], 7, 1);
+    gameboard.addShip(ships[9], 9, 1);
 
     return gameboard;
 }

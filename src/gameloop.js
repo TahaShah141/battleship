@@ -1,10 +1,12 @@
 import { setupLayout, newElement, newPara } from "./domStuff";
 
-const hitSVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>window-close</title><path d="M13.46,12L19,17.54V19H17.54L12,13.46L6.46,19H5V17.54L10.54,12L5,6.46V5H6.46L12,10.54L17.54,5H19V6.46L13.46,12Z" fill="currentColor"/></svg>';
-const missSVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>circle-small</title><path d="M12,10A2,2 0 0,0 10,12C10,13.11 10.9,14 12,14C13.11,14 14,13.11 14,12A2,2 0 0,0 12,10Z" fill="currentColor"/></svg>';
+const hitSVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.46,12L19,17.54V19H17.54L12,13.46L6.46,19H5V17.54L10.54,12L5,6.46V5H6.46L12,10.54L17.54,5H19V6.46L13.46,12Z" fill="currentColor"/></svg>';
+const missSVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12,10A2,2 0 0,0 10,12C10,13.11 10.9,14 12,14C13.11,14 14,13.11 14,12A2,2 0 0,0 12,10Z" fill="currentColor"/></svg>';
 
 let players;
 let currentTurn;
+
+let delay = 500;
 
 export function startGame(playyas) {
     players = [];
@@ -91,9 +93,9 @@ class Player {
                 showShip(currentTurn, ship);
                 console.log("sunk");
                 if (gameboard.allSunk()) gameOver(currentTurn);
-                setTimeout(()=> this.makeRandomTurn(gameboard), 1000);
+                setTimeout(()=> this.makeRandomTurn(gameboard), 500);
             } else {
-                setTimeout(() => this.hitAround(gameboard), 1000);
+                setTimeout(() => this.hitAround(gameboard), 500);
             }
         } else {
             cell.innerHTML = missSVG;
@@ -193,7 +195,7 @@ function cellClicked(turn, gameboard, cell, x, y) {
     }
 
     let nextPlayer = players[(currentTurn+1)%2];
-    if (nextPlayer.isComputer) setTimeout(() => nextPlayer.makeTurn(players[currentTurn].gameboard), 1000);
+    if (nextPlayer.isComputer) setTimeout(() => nextPlayer.makeTurn(players[currentTurn].gameboard), 500);
 }
 
 function showShip(turn, ship) {
