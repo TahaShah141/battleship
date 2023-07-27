@@ -331,7 +331,7 @@ function loadNewForm() {
 }
 
 function playAgainstComputer() {
-    let name = "Computer";
+    let name = "36qTelbFoz";
 
     let gameboard = getRandomBoard();
 

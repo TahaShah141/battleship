@@ -81,6 +81,10 @@ export class Gameboard {
         }
         return true;
     }
+
+    canAttack(x, y) {
+        return x >= 0 && x < 10 && y >= 0 && y < 10 && !this.tries[x][y];
+    }
 }
 
 export function defaultGameboard() {
