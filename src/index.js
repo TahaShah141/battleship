@@ -1,4 +1,5 @@
 import "./style.css";
-import {setupLayout, initLayout} from "./domStuff";
+import {initLayout} from "./domStuff";
+import { setupLayout } from "./setup";
 
 setupLayout();
