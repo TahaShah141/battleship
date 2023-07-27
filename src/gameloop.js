@@ -91,9 +91,9 @@ class Player {
                 showShip(currentTurn, ship);
                 console.log("sunk");
                 if (gameboard.allSunk()) gameOver(currentTurn);
-                this.makeRandomTurn(gameboard);
+                setTimeout(()=> this.makeRandomTurn(gameboard), 1000);
             } else {
-                this.hitAround(gameboard);
+                setTimeout(() => this.hitAround(gameboard), 1000);
             }
         } else {
             cell.innerHTML = missSVG;
@@ -193,7 +193,7 @@ function cellClicked(turn, gameboard, cell, x, y) {
     }
 
     let nextPlayer = players[(currentTurn+1)%2];
-    if (nextPlayer.isComputer) nextPlayer.makeTurn(players[currentTurn].gameboard);
+    if (nextPlayer.isComputer) setTimeout(() => nextPlayer.makeTurn(players[currentTurn].gameboard), 1000);
 }
 
 function showShip(turn, ship) {
