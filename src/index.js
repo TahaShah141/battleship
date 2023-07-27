@@ -1,5 +1,5 @@
 import "./style.css";
-import {initLayout} from "./domStuff";
-import { setupLayout } from "./setup";
+import {initLayout, setupLayout} from "./domStuff";
+import { getSetupMain } from "./setup";
 
-setupLayout();
+setupLayout(getSetupMain());

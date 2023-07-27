@@ -41,8 +41,13 @@ export class Gameboard {
     }
 
     receiveAttack(x, y) {
-        if (this.board[x][y]) this.board[x][y].hit();
+        let attackedShip = false;
+        if (this.board[x][y]) {
+            this.board[x][y].hit();
+            attackedShip = true;
+        }
         this.tries[x][y] = true;
+        return attackedShip;
     }
 
     allSunk() {
@@ -96,6 +101,27 @@ export function defaultGameboard() {
     gameboard.addShip(ships[7], 2, 0);
     gameboard.addShip(ships[8], 7, 0);
     gameboard.addShip(ships[9], 9, 0);
+
+    return gameboard;
+}
+
+export function getRandomBoard() {
+    let gameboard = new Gameboard();
+    let ships = getShips();
+
+    ships.forEach(ship => {
+        let x, y;
+        let fit;
+        do {
+            x = Math.floor(Math.random()*1000) % 10;
+            y = Math.floor(Math.random()*1000) % 10;
+            if (Math.floor(Math.random()*1000) % 2 === 0) ship.flip();
+
+            fit = gameboard.shipFits(ship, x, y);    
+        } while (!fit)
+
+        gameboard.addShip(ship, x, y);
+    })
 
     return gameboard;
 }

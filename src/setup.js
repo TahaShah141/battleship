@@ -1,9 +1,11 @@
-import { getHeader, getFooter, newElement, newInput, newPara} from "./domStuff";
-import { defaultGameboard } from "./gameboard-class";
+import { getHeader, getFooter, newElement, newInput, clearScreen, setupLayout} from "./domStuff";
+import { defaultGameboard, getRandomBoard } from "./gameboard-class";
+import { startGame } from "./gameloop";
 
 class SetupBoard {
     constructor() {
         this.gameboard = defaultGameboard();
+
         this.dom = this.getSetupBoard();
         this.shipPicked = false;
         this.shipInfo = {};
@@ -106,6 +108,9 @@ class SetupBoard {
         this.shipPicked = true;
 
         this.gameboard.removeShip(ship, shipX, shipY);
+
+        this.removeShip(ship, shipX, shipY);
+        this.showShip(ship, shipX, shipY);
     }
 
     dropShip(c) {
@@ -117,9 +122,18 @@ class SetupBoard {
         shipX = shipCoords.x;
         shipY = shipCoords.y;
 
+        if (!this.gameboard.shipFits(ship, shipX, shipY)) {
+            this.removeShip(ship, shipX, shipY);
+            shipX = this.shipInfo.prevShow.x;
+            shipY = this.shipInfo.prevShow.y;
+        } 
+
         this.gameboard.addShip(ship, shipX, shipY);
         this.shipPicked = false;
         this.shipInfo = {};
+
+        this.removeShip(ship, shipX, shipY);
+        this.showShip(ship, shipX, shipY);
     }
 
     setupCellLeft(c) {
@@ -159,7 +173,8 @@ class SetupBoard {
     
         for (let i = 0; i < ship.length; i++) {
             let cell = getCell(x+dx*i, y+dy*i);
-            cell.classList.add("ship-segment")
+            cell.classList.add("ship-segment");
+            if (this.shipPicked) cell.classList.add("selected");
         }
 
         if (this.shipPicked) {
@@ -178,7 +193,13 @@ class SetupBoard {
             let X = x+dx*i;
             let Y = y+dy*i;
             let cell = getCell(X, Y);
-            if (cell && !(this.gameboard.board[X][Y])) cell.classList.remove("ship-segment");
+            if (cell && !(this.gameboard.board[X][Y])) {
+                cell.classList.remove("ship-segment");
+                cell.classList.remove("selected");
+            }else if (cell && !this.shipPicked) {
+                cell.classList.remove("selected");
+            }
+
             else return;
         }
     }
@@ -194,6 +215,17 @@ class SetupBoard {
 
         return {ship, x: shipX, y: shipY}
     }
+
+    loadBoard(gameboard) {
+        for (let x = 0; x < 10; x++) 
+        for (let y = 0; y < 10; y++) {
+            let cell = getCell(x, y);
+            cell.classList.remove("ship-segment");
+            if (gameboard.board[x][y]) cell.classList.add("ship-segment");
+        }
+
+        this.gameboard = gameboard;
+    }
 }
 
 function getCellInfo(cell) {
@@ -207,21 +239,16 @@ function getCell(x, y) {
     return document.querySelector(`.setup-cell[data-col="${x}"][data-row="${y}"]`)
 }
 
+export function getSetupMain() {
+    let main = newElement("div", "main");
+    let form = getForm();
 
-export function setupLayout() {
-    const body = document.body;
-
-    const header = getHeader();
-    const main = getSetupMain();
-    const footer = getFooter();
-
-    body.appendChild(header);
-    body.appendChild(main);
-    body.appendChild(footer);
+    players = [];
+    main.appendChild(form);
+    return main;
 }
 
-function getSetupMain() {
-    let main = newElement("div", "main");
+function getForm(footer) {
     let form = newElement("div", "startup-form");
 
     let title = newElement("h3", "form-title");
@@ -233,33 +260,82 @@ function getSetupMain() {
 
     let setupBoard = new SetupBoard();
     let board = setupBoard.dom;
-    let buttons = getSetupButtons();
+    let buttons = getSetupButtons(setupBoard);
 
     boardNbuttons.appendChild(board);
     boardNbuttons.appendChild(buttons);
+    
+    if (!footer) {
+        footer = newElement("div", "form-footer", "center");
+        footer.textContent = "Click a ship to move/place it. Right Click on a ship to rotate it";
+    }
 
     form.appendChild(title);
     form.appendChild(document.createElement("hr"));
     form.appendChild(inputContainer);
     form.appendChild(boardNbuttons);
+    form.appendChild(footer);
 
-    main.appendChild(form);
-    return(main);
+    return form;
 }
 
-function getSetupButtons() {
+function getSetupButtons(setupBoard) {
     let buttons = newElement("div", "setup-buttons");
     let resetButton = newElement("button", "setup-button", "reset");
     let randomizeButton = newElement("button", "setup-button", "randomize");
     let confirmButton = newElement("button", "setup-button", "confirm");
 
     resetButton.textContent = "Reset";
+    resetButton.addEventListener("click", () => setupBoard.loadBoard(defaultGameboard()));
     randomizeButton.textContent = "Randomize";
+    randomizeButton.addEventListener("click", () => setupBoard.loadBoard(getRandomBoard()));
     confirmButton.textContent = "Confirm";
+    confirmButton.addEventListener("click", () => formConfirmed(setupBoard));
 
     buttons.appendChild(resetButton);
     buttons.appendChild(randomizeButton);
     buttons.appendChild(confirmButton);
 
     return buttons;
+}
+
+let players;
+
+function formConfirmed(setupBoard) {
+    let nameDom = document.querySelector(".startup-form .input-field");
+
+    let name = nameDom.value;
+    
+    let gameboard = setupBoard.gameboard;
+    
+    players.push({name, gameboard});
+    
+    if (players.length === 2) {
+        startGame(players);
+    }
+    else loadNewForm();
+}
+
+function loadNewForm() {
+    let main = newElement("div", "main");
+
+    let footer = newElement("a", "form-footer", "form-link", "center");
+    footer.textContent = "|Play Against a Computer|";
+    footer.addEventListener("click", playAgainstComputer); 
+
+    let form = getForm(footer);
+
+    main.appendChild(form);
+
+    setupLayout(main);
+}
+
+function playAgainstComputer() {
+    let name = "Computer";
+
+    let gameboard = getRandomBoard();
+
+    players.push({name, gameboard});
+
+    startGame(players);
 }

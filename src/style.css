@@ -87,6 +87,10 @@ body {
     border: none;
 }
 
+.ship-segment.selected {
+    background-color: red;
+}
+
 .setup-buttons {
     width: 100%;
     display: flex;
@@ -101,6 +105,15 @@ body {
     border-radius: 10px;
     font-size: 0.9rem;
     letter-spacing: 2px;
+}
+
+.form-footer {
+    color: #555;
+}
+
+.form-link {
+    color: #ddd;
+    text-decoration: underline;
 }
 
 
@@ -129,6 +142,18 @@ body {
 .cell {
     background-color: white;
     border: 1px solid #555;
+}
+
+.sunk {
+    background-color: red;
+}
+
+.sunk svg {
+    color: white;
+}
+
+.cell.sunk:hover {
+    background-color: maroon;
 }
 
 .cell-heading {
@@ -176,7 +201,7 @@ body {
     border-color: white;
 }
 
-.input-field:focus + .input-label {
+.input-field:focus + .input-label, .input-field:not(:placeholder-shown) + .input-label{
     color: white;
     font-size: 1.25rem;
     transform: translateY(-1.5rem);
