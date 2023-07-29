@@ -3,14 +3,8 @@ import { getShips } from './ship-class';
 
 export class Gameboard {
     constructor(n=10) {
-        this.board = this.initBoard(n)
-        this.tries = [];
-        for (let i = 0; i < n; i++) {
-            this.tries.push([]);
-            for (let j = 0; j < n; j++) {
-                this.tries[i].push(false);
-            }
-        }
+        this.board = this.initBoard(n);
+        this.tries = this.initTries(n);
 
         this.ships = [];
     }
@@ -24,6 +18,17 @@ export class Gameboard {
             }
         }
         return board;
+    }
+
+    initTries(n=10) {
+        let tries = [];
+        for (let i = 0; i < n; i++) {
+            tries.push([]);
+            for (let j = 0; j < n; j++) {
+                tries[i].push(false);
+            }
+        }
+        return tries;
     }
 
     addShip(ship, x, y) {
@@ -52,7 +57,7 @@ export class Gameboard {
 
     allSunk() {
         for (let i = 0; i < this.ships.length; i++) {
-            if (!this.ships[i].sunk) return false;
+            if (!this.ships[i].isSunk()) return false;
         }
         return true;
     }
@@ -84,6 +89,14 @@ export class Gameboard {
 
     canAttack(x, y) {
         return x >= 0 && x < 10 && y >= 0 && y < 10 && !this.tries[x][y];
+    }
+
+    reset() {
+        this.tries = this.initTries();
+        console.log(this.tries);
+        this.ships.forEach(ship => {
+            ship.reset();
+        })
     }
 }
 

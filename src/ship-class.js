@@ -3,7 +3,6 @@ class Ship {
         this.length = length;
         this.segments = [];
         this.horizontal = isHorizontal;
-        this.sunk = false;  
     }
 
     isSunk() {
@@ -21,6 +20,10 @@ class Ship {
 
         return seg;
     }
+
+    reset() {
+        this.segments.forEach(segment => segment.isHit = false);
+    }
 }
 
 class Segment {
@@ -33,7 +36,6 @@ class Segment {
 
     hit() {
         this.isHit = true;
-        this.parent.sunk = this.parent.isSunk();
     }
 }
 

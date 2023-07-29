@@ -1,4 +1,5 @@
 import { setupLayout, newElement, newPara } from "./domStuff";
+import { getSetupMain } from "./setup";
 
 const hitSVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.46,12L19,17.54V19H17.54L12,13.46L6.46,19H5V17.54L10.54,12L5,6.46V5H6.46L12,10.54L17.54,5H19V6.46L13.46,12Z" fill="currentColor"/></svg>';
 const missSVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12,10A2,2 0 0,0 10,12C10,13.11 10.9,14 12,14C13.11,14 14,13.11 14,12A2,2 0 0,0 12,10Z" fill="currentColor"/></svg>';
@@ -9,14 +10,16 @@ let currentTurn;
 let delay = 500;
 
 export function startGame(playyas) {
+
     players = [];
     currentTurn = 1;
-
+    
     for (let i = 0; i < playyas.length; i++) {
         players.push(new Player(i, playyas[i].name, playyas[i].gameboard))
     }
-
+    
     setupLayout(getGameMain(players));
+    updateClasses(currentTurn);
 }
 
 class Player {
@@ -93,13 +96,13 @@ class Player {
                 showShip(currentTurn, ship);
                 console.log("sunk");
                 if (gameboard.allSunk()) gameOver(currentTurn);
-                setTimeout(()=> this.makeRandomTurn(gameboard), 500);
+                setTimeout(()=> this.makeRandomTurn(gameboard), delay);
             } else {
-                setTimeout(() => this.hitAround(gameboard), 500);
+                setTimeout(() => this.hitAround(gameboard), delay);
             }
         } else {
             cell.innerHTML = missSVG;
-            currentTurn = (currentTurn + 1) % 2;
+            changeTurn();
         }
     }
 
@@ -124,6 +127,20 @@ class Player {
     }
 }
 
+function changeTurn() {
+    updateClasses(currentTurn);
+    currentTurn = (currentTurn + 1) % 2;
+    updateClasses(currentTurn);
+}
+
+function updateClasses(index) {
+    let board, playerName;
+    board = document.querySelector(`.board-${index}`);
+    playerName = document.querySelector(`.player-${index}`);
+
+    board.classList.toggle("current");
+    playerName.classList.toggle("current");
+}
 
 function getGameMain(players) {
     let main = newElement("div", "main");
@@ -132,12 +149,13 @@ function getGameMain(players) {
 
     main.appendChild(playerView1);
     main.appendChild(playerView2);
+
     return main;
 }
 
 function getPlayerView(player) {
     let playerView = newElement("div", "player-view", "center");
-    let name = newPara(`${player.name}`, "player-name");
+    let name = newPara(`${player.name}`, "player-name", `player-${player.turn}`);
     let board = getBoard(player.turn, player.gameboard);
     playerView.appendChild(name);
     playerView.appendChild(board);
@@ -146,7 +164,7 @@ function getPlayerView(player) {
 }
 
 function getBoard(turn, gameboard) {
-    let board = newElement('div', 'board');
+    let board = newElement('div', 'board', `board-${turn}`);
 
     for (let row = 0; row < 11; row++) {
         for (let col = 0; col < 11; col++) {
@@ -186,16 +204,17 @@ function cellClicked(turn, gameboard, cell, x, y) {
 
         if (ship.isSunk()) {
             showShip(turn, ship);
-            if (gameboard.allSunk()) gameOver();
+            if (gameboard.allSunk()) gameOver((turn+1)%2);
         }
     }
     else {
         cell.innerHTML = missSVG;
-        currentTurn = (currentTurn + 1) % 2;
+        changeTurn();
     }
+    cell.classList.add("marked");
 
     let nextPlayer = players[(currentTurn+1)%2];
-    if (nextPlayer.isComputer) setTimeout(() => nextPlayer.makeTurn(players[currentTurn].gameboard), 500);
+    if (nextPlayer.isComputer) setTimeout(() => nextPlayer.makeTurn(players[currentTurn].gameboard), delay);
 }
 
 function showShip(turn, ship) {
@@ -209,6 +228,55 @@ function getCell(turn, x, y) {
     return document.querySelector(`.cell[data-col="${x}"][data-row="${y}"][data-board="${turn}"]`);
 }
 
-function gameOver(loser) {
-    console.log("gameOver");
+function gameOver(winnerTurn) {
+    let winner = players[winnerTurn];
+    let name = winner.name;
+
+    let backdrop = newElement("div", "black-bg");
+    let popup = getPopup(name);
+
+    backdrop.appendChild(popup);
+    document.body.appendChild(backdrop);
+}
+
+function getPopup(name) {
+    let popup = newElement("div", "gameover-popup", "invisible");
+    let heading = newElement("h2", "gameover-heading");
+    heading.textContent = "Game Over";
+
+    let message = newPara(`${name} won the game !`, "gameover-message");
+
+    let buttons = newElement("div", "gameover-buttons");
+    let playAgain = newElement("button", "play-again");
+    playAgain.textContent = "Play Again";
+    playAgain.addEventListener("click", () => {removePopup(); startAgain();});
+
+    let newGame = newElement("button", "new-game");
+    newGame.textContent = "New Game";
+    newGame.addEventListener("click", () => {removePopup(); setupLayout(getSetupMain());})
+
+    buttons.appendChild(newGame);
+    buttons.appendChild(playAgain);
+
+    popup.appendChild(heading);
+    popup.appendChild(message);
+    popup.appendChild(buttons);
+
+    setTimeout(() => popup.classList.remove("invisible"), 0);
+    return popup;
+}
+
+function removePopup() {
+    let container = document.querySelector(".black-bg");
+    document.body.removeChild(container);
+}
+
+function startAgain() {
+    players.forEach(player => {
+        player.gameboard.reset();
+    })
+
+    currentTurn = 1;
+    setupLayout(getGameMain(players));
+    updateClasses(currentTurn);
 }
